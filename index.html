@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sideyard | Cigars, Bourbon & Fine Company</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@300;400;600&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0f0d0c;
+            --bg-card: #181513;
+            --bg-card-hover: #221d19;
+            --border-color: #2e2722;
+            --amber-accent: #d48c46;
+            --amber-glow: #e2a868;
+            --amber-dim: rgba(212, 140, 70, 0.15);
+            --text-light: #ece7e1;
+            --text-muted: #9e948a;
+            --gold-subtle: #b89768;
+            --danger-red: #c05252;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(212, 140, 70, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(184, 151, 104, 0.04) 0%, transparent 50%);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+        }
+
+        .quote-font {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* -------------------------------------------------------------
+           PASSCODE OVERLAY / GATEKEEPER
+        ------------------------------------------------------------- */
+        #gatekeeper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #0a0908;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        #gatekeeper.unlocked {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .passcode-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 48px 36px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .passcode-box h2 {
+            font-size: 1.8rem;
+            color: var(--amber-glow);
+            margin-bottom: 8px;
+        }
+
+        .passcode-box p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .passcode-input {
+            flex: 1;
+            background: #0c0a09;
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            text-align: center;
+            letter-spacing: 2px;
+            transition: border-color 0.3s ease;
+        }
+
+        .passcode-input:focus {
+            border-color: var(--amber-accent);
+        }
+
+        .btn-entry {
+            background: var(--amber-accent);
+            color: #0f0d0c;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-entry:hover {
+            background: var(--amber-glow);
+            box-shadow: 0 0 15px rgba(212, 140, 70, 0.4);
+        }
+
+        .error-msg {
+            color: var(--danger-red);
+            font-size: 0.82rem;
+            min-height: 20px;
+            margin-top: 6px;
+        }
+
+        .hint {
+            font-size: 0.75rem;
+            color: rgba(158, 148, 138, 0.5);
+            margin-top: 16px;
+        }
+
+        /* -------------------------------------------------------------
+           HEADER & HERO
+        ------------------------------------------------------------- */
+        header {
+            padding: 90px 0 60px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--amber-accent);
+            border: 1px solid rgba(212, 140, 70, 0.3);
+            padding: 6px 16px;
+            border-radius: 50px;
+            margin-bottom: 24px;
+            background: rgba(212, 140, 70, 0.05);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            font-weight: 300;
+        }
+
+        .divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--amber-accent), transparent);
+            margin: 0 auto 50px auto;
+        }
+
+        /* Lock Button in Header */
+        .lock-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lock-btn:hover {
+            border-color: var(--amber-accent);
+            color: var(--text-light);
+        }
+
+        /* -------------------------------------------------------------
+           RSVP / "LIGHTING UP TONIGHT?" WIDGET
+        ------------------------------------------------------------- */
+        .rsvp-container {
+            background: linear-gradient(135deg, rgba(24, 21, 19, 0.95), rgba(15, 13, 12, 0.98));
+            border: 1px solid var(--amber-accent);
+            box-shadow: 0 10px 40px rgba(212, 140, 70, 0.08);
+            border-radius: 16px;
+            padding: 36px;
+            margin-bottom: 70px;
+            position: relative;
+        }
+
+        .rsvp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .rsvp-title h2 {
+            font-size: 1.6rem;
+            color: var(--amber-glow);
+        }
+
+        .rsvp-title p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .status-counter {
+            background: rgba(212, 140, 70, 0.1);
+            border: 1px solid rgba(212, 140, 70, 0.3);
+            padding: 8px 18px;
+            border-radius: 50px;
+            color: var(--amber-glow);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .rsvp-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr auto;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .rsvp-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .rsvp-input {
+            background: #0c0a09;
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .rsvp-input:focus {
+            border-color: var(--amber-accent);
+        }
+
+        .btn-rsvp {
+            background: var(--amber-accent);
+            color: #0f0d0c;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-rsvp:hover {
+            background: var(--amber-glow);
+        }
+
+        /* Attendee List */
+        .attendees-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        .attendee-card {
+            background: rgba(12, 10, 9, 0.6);
+            border: 1px solid var(--border-color);
+            padding: 14px 18px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .attendee-info .name {
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .attendee-info .eta {
+            font-size: 0.78rem;
+            color: var(--amber-accent);
+        }
+
+        .attendee-info .note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        .remove-btn {
+            background: transparent;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .remove-btn:hover {
+            color: var(--danger-red);
+        }
+
+        /* -------------------------------------------------------------
+           POUR & PUFF LOG (TABBED SECTION)
+        ------------------------------------------------------------- */
+        .log-section {
+            margin-bottom: 70px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--amber-dim);
+            border-color: var(--amber-accent);
+            color: var(--amber-glow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .log-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .log-card:hover {
+            border-color: rgba(212, 140, 70, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .log-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--amber-accent);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .log-card h3 {
+            font-size: 1.15rem;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .log-card .sub-detail {
+            color: var(--gold-subtle);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .log-card p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        .rating {
+            margin-top: 14px;
+            color: var(--amber-glow);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        /* -------------------------------------------------------------
+           PILLARS & CODE
+        ------------------------------------------------------------- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 70px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(212, 140, 70, 0.4);
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, rgba(24, 21, 19, 0.9), rgba(15, 13, 12, 0.95));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .banner h2 {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            color: var(--amber-glow);
+        }
+
+        .banner p {
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto;
+            font-size: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .secret-tag {
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: var(--gold-subtle);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- GATEKEEPER / PASSCODE OVERLAY -->
+    <div id="gatekeeper">
+        <div class="passcode-box">
+            <h2>SIDEYARD</h2>
+            <p>Enter the house password to access the lounge board.</p>
+            <form id="gatekeeper-form" onsubmit="unlockLounge(event)">
+                <div class="input-group">
+                    <input type="password" id="passcode-input" class="passcode-input" placeholder="••••••••" required autofocus>
+                    <button type="submit" class="btn-entry">ENTER</button>
+                </div>
+            </form>
+            <div id="error-msg" class="error-msg"></div>
+            <div class="hint">Passcode: <code>sideyard</code></div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTENT -->
+    <div class="container">
+        
+        <!-- Header -->
+        <header>
+            <button class="lock-btn" onclick="lockLounge()" title="Lock Screen">🔒 Lock</button>
+            <span class="badge">Private Gathering Spot</span>
+            <h1>Sideyard</h1>
+            <p class="hero-subtitle quote-font">"Good spirits, fine cigars, and unfiltered conversation."</p>
+            <div class="divider"></div>
+        </header>
+
+        <!-- WIDGET 1: "LIGHTING UP TONIGHT?" (RSVP & ATTENDANCE) -->
+        <section class="rsvp-container">
+            <div class="rsvp-header">
+                <div class="rsvp-title">
+                    <h2>Lighting Up Tonight?</h2>
+                    <p>Let the core group know you’re stopping by for a pour or a smoke.</p>
+                </div>
+                <div class="status-counter">
+                    <span id="attendee-count">0</span> Regulars Expected
+                </div>
+            </div>
+
+            <form class="rsvp-actions" onsubmit="addAttendee(event)">
+                <input type="text" id="att-name" class="rsvp-input" placeholder="Your Name" required>
+                <input type="text" id="att-eta" class="rsvp-input" placeholder="ETA (e.g. 7:30 PM)">
+                <input type="text" id="att-note" class="rsvp-input" placeholder="Bringing (e.g. Blanton's, cigars, stories...)">
+                <button type="submit" class="btn-rsvp">I'm In 🥃</button>
+            </form>
+
+            <div class="attendees-list" id="attendees-list">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <!-- WIDGET 2: POUR & PUFF LOG -->
+        <section class="log-section">
+            <div class="section-header">
+                <h2>Pour & Puff Log</h2>
+                <p class="quote-font" style="color: var(--text-muted);">Curated selections currently featured at the lounge</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('whiskies')">🥃 Featured Whiskies</button>
+                <button class="tab-btn" onclick="switchTab('cigars')">🍂 Featured Cigars</button>
+                <button class="tab-btn" onclick="switchTab('archive')">⭐ Member Favorites</button>
+            </div>
+
+            <!-- Tab 1: Whiskies -->
+            <div id="whiskies" class="tab-content active">
+                <div class="log-card">
+                    <span class="log-tag">On the Shelf</span>
+                    <h3>Midwinter Night's Dram</h3>
+                    <div class="sub-detail">High West Distillery • Finished Rye</div>
+                    <p>Rich, dark fruit, cinnamon toast, and subtle oak smoke. Perfect for cold evening conversations.</p>
+                    <div class="rating">★★★★★ • House Staple</div>
+                </div>
+                <div class="log-card">
+                    <span class="log-tag">Single Barrel</span>
+                    <h3>Blanton's Gold Edition</h3>
+                    <div class="sub-detail">Bourbon • 103 Proof</div>
+                    <p>Notes of honey, heavy rye spice, citrus, and dried fruit. A smooth, high-proof masterpiece.</p>
+                    <div class="rating">★★★★★ • Top Shelf</div>
+                </div>
+                <div class="log-card">
+                    <span class="log-tag">Peated Scotch</span>
+                    <h3>Lagavulin 16 Year</h3>
+                    <div class="sub-detail">Islay Single Malt • 86 Proof</div>
+                    <p>Deep, intense peat smoke with rich sweet fruits and sea salt notes. Pairs exceptionally well with full cigars.</p>
+                    <div class="rating">★★★★☆ • Heavy Smoke</div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Cigars -->
+            <div id="cigars" class="tab-content">
+                <div class="log-card">
+                    <span class="log-tag">Current Cut</span>
+                    <h3>Padron 1926 Series #9</h3>
+                    <div class="sub-detail">Maduro • Full Body</div>
+                    <p>Exceptionally smooth cocoa, coffee bean, and dark spice notes with an flawless draw from start to finish.</p>
+                    <div class="rating">★★★★★ • Unanimous Pick</div>
+                </div>
+                <div class="log-card">
+                    <span class="log-tag">Mild & Smooth</span>
+                    <h3>Arturo Fuente Hemingway</h3>
+                    <div class="sub-detail">Cameroon • Medium Body</div>
+                    <p>Sweet cedar, subtle pepper, and cream. Perfect accompaniment for an early evening pour.</p>
+                    <div class="rating">★★★★☆ • Crowd Favorite</div>
+                </div>
+                <div class="log-card">
+                    <span class="log-tag">Special Occasion</span>
+                    <h3>Liga Privada No. 9</h3>
+                    <div class="sub-detail">Broadleaf • Full Body</div>
+                    <p>Deep, rich, and earthy with dense white smoke and chocolate spice aromas.</p>
+                    <div class="rating">★★★★★ • Legendary</div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Member Archive -->
+            <div id="archive" class="tab-content">
+                <div class="log-card">
+                    <span class="log-tag">Member Contribution</span>
+                    <h3>Pappy Van Winkle 12yr</h3>
+                    <div class="sub-detail">Poured by Dave • Last Month</div>
+                    <p>"Brought out for the quarterly milestone celebration. Worth every drop."</p>
+                    <div class="rating">🏆 Hall of Fame</div>
+                </div>
+                <div class="log-card">
+                    <span class="log-tag">Custom Cigar Box</span>
+                    <h3>Cuban Partagás Serie D No. 4</h3>
+                    <div class="sub-detail">Poured & Shared by Marcus</div>
+                    <p>"Box-pressed earthiness and black pepper. Unforgettable night."</p>
+                    <div class="rating">🏆 Hall of Fame</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORE PILLARS -->
+        <section class="grid">
+            <div class="card">
+                <div class="card-icon">🥃</div>
+                <h3>The Pour</h3>
+                <p>Curated single malts, small-batch bourbons, and top-shelf rye. Neat or on a rock, the glass is always topped off.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🍂</div>
+                <h3>The Draw</h3>
+                <p>From full-bodied Maduro wraps to smooth Connecticut cuts. A space to kick back, light up, and relax.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🤝</div>
+                <h3>The Circle</h3>
+                <p>Entrepreneurs, business owners, and close friends. No titles at the door—just genuine conversation and good vibes.</p>
+            </div>
+        </section>
+
+        <!-- CODE & FOOTER -->
+        <section class="banner">
+            <h2>The Unwritten Code</h2>
+            <p class="quote-font">“Check the ego at the gate. Speak freely, listen intently, and enjoy the evening.”</p>
+        </section>
+
+        <footer>
+            <p class="secret-tag">— Sideyard Gathering Spot —</p>
+            <p style="margin-top: 8px;">Off the Record & Unofficial Invitation Only</p>
+        </footer>
+    </div>
+
+    <!-- INTERACTIVE SCRIPT -->
+    <script>
+        // -------------------------------------------------------------
+        // PASSCODE GATEKEEPER LOGIC
+        // -------------------------------------------------------------
+        const CORRECT_PASS = "sideyard";
+
+        // Auto check if unlocked in session
+        if (sessionStorage.getItem("sideyard_unlocked") === "true") {
+            document.getElementById("gatekeeper").classList.add("unlocked");
+        }
+
+        function unlockLounge(e) {
+            e.preventDefault();
+            const input = document.getElementById("passcode-input").value;
+            const errorElement = document.getElementById("error-msg");
+
+            if (input.toLowerCase() === CORRECT_PASS) {
+                sessionStorage.setItem("sideyard_unlocked", "true");
+                document.getElementById("gatekeeper").classList.add("unlocked");
+                errorElement.innerText = "";
+            } else {
+                errorElement.innerText = "Incorrect passcode. Try 'sideyard'.";
+            }
+        }
+
+        function lockLounge() {
+            sessionStorage.removeItem("sideyard_unlocked");
+            document.getElementById("gatekeeper").classList.remove("unlocked");
+            document.getElementById("passcode-input").value = "";
+        }
+
+        // -------------------------------------------------------------
+        // RSVP / ATTENDANCE STATE (Persisted in localStorage)
+        // -------------------------------------------------------------
+        const DEFAULT_ATTENDEES = [
+            { name: "Marcus", eta: "7:00 PM", note: "Bringing Weller Full Proof" },
+            { name: "John B.", eta: "7:30 PM", note: "Fresh Padron Box" }
+        ];
+
+        function getAttendees() {
+            const saved = localStorage.getItem("sideyard_attendees");
+            return saved ? JSON.parse(saved) : DEFAULT_ATTENDEES;
+        }
+
+        function saveAttendees(list) {
+            localStorage.setItem("sideyard_attendees", JSON.stringify(list));
+            renderAttendees();
+        }
+
+        function renderAttendees() {
+            const list = getAttendees();
+            const container = document.getElementById("attendees-list");
+            const countEl = document.getElementById("attendee-count");
+
+            countEl.innerText = list.length;
+            container.innerHTML = "";
+
+            if (list.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.88rem; grid-column: 1/-1;">No one listed yet tonight. Be the first to claim a spot!</p>`;
+                return;
+            }
+
+            list.forEach((person, index) => {
+                const card = document.createElement("div");
+                card.className = "attendee-card";
+                card.innerHTML = `
+                    <div class="attendee-info">
+                        <div class="name">${escapeHtml(person.name)} ${person.eta ? `<span class="eta">• ${escapeHtml(person.eta)}</span>` : ''}</div>
+                        ${person.note ? `<div class="note">"${escapeHtml(person.note)}"</div>` : ''}
+                    </div>
+                    <button class="remove-btn" onclick="removeAttendee(${index})" title="Cancel">&times;</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addAttendee(e) {
+            e.preventDefault();
+            const name = document.getElementById("att-name").value.trim();
+            const eta = document.getElementById("att-eta").value.trim();
+            const note = document.getElementById("att-note").value.trim();
+
+            if (!name) return;
+
+            const list = getAttendees();
+            list.push({ name, eta, note });
+            saveAttendees(list);
+
+            // Reset Form Inputs
+            document.getElementById("att-name").value = "";
+            document.getElementById("att-eta").value = "";
+            document.getElementById("att-note").value = "";
+        }
+
+        function removeAttendee(index) {
+            const list = getAttendees();
+            list.splice(index, 1);
+            saveAttendees(list);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        // -------------------------------------------------------------
+        // TAB SWITCHING LOGIC
+        // -------------------------------------------------------------
+        function switchTab(tabId) {
+            document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+            document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
+
+            event.currentTarget.classList.add("active");
+            document.getElementById(tabId).classList.add("active");
+        }
+
+        // Initial render on load
+        renderAttendees();
+    </script>
+</body>
+</html>
